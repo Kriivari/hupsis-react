@@ -1,0 +1,34 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import 'react-big-calendar/lib/sass/styles';
+
+@font-face {
+  font-family: 'Signa';
+  src: url("../public/SignaColumnBook.ttf") format("truetype");
+}
+
+.text-primary {
+  color: #a7173b !important;
+}
+
+.event-open {
+    width: 99%;
+    background-color: #d0eed0;
+}
+
+.event-closed {
+    width: 99%;
+    background-color: lightgrey;
+}
+
+.event-hidden {
+    width: 99%;
+    background-color: #f0c0c0;
+}
+
+.event-signedup {
+    width: 99%;
+    background-color: #d0e0fa;
+}
+
+$font-family-sans-serif: Signa;
+

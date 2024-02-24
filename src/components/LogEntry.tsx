@@ -1,0 +1,209 @@
+import React, { useEffect, useState } from "react"
+import { useAppSelector, useAppDispatch } from "./../hooks"
+import { Button, Dialog, DialogTrigger, DialogTitle, DialogContent, DialogSurface, DialogBody, DialogActions, Checkbox, Dropdown, Input, Option, Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow, makeStyles, tokens } from "@fluentui/react-components"
+import { EventData, LogEntryData } from "../services/models"
+import { getEvent, doLog } from "./../services/events"
+import { strings } from "./../localization"
+import { formatHupsisTime } from "./../util"
+
+interface Props {
+  event: EventData
+}
+
+const useStyles = makeStyles({
+  root: {
+    marginTop: tokens.spacingVerticalS,
+    marginRight: tokens.spacingHorizontalS,
+  },
+  headerButtons: {
+    marginLeft: tokens.spacingHorizontalMNudge,
+    float: "right",
+  },
+  dropdown: {
+    minWidth: "180px",
+  },
+  input: {
+    minWidth: "180px",
+  },
+})
+
+export const LogEntry: React.FC<Props> = ({event}) => {
+  const classes = useStyles()
+  const appSelector = useAppSelector
+  const appDispatch = useAppDispatch()
+  const login = appSelector(state => state.login)
+  const codes = appSelector(state => state.events.codes)
+  const [sex, setSex] = useState(strings.male)
+  const [age, setAge] = useState(strings.adult)
+  const [reason, setReason] = useState("")
+  const [details, setDetails] = useState("")
+  const [firstaid, setFirstaid] = useState("")
+  const [future, setFuture] = useState("")
+  const [destination, setDestination] = useState("")
+  const [medicine, setMedicine] = useState(false)
+  const [form, setForm] = useState(false)
+  const [notes, setNotes] = useState("")
+  const [usage, setUsage] = useState("")
+  const [user, setUser] = useState(login.last_name + " " + login.first_name)
+  const [time, setTime] = useState(formatHupsisTime(new Date()))
+  const [logEntries, setLogEntries] = useState([] as LogEntryData[])
+
+  const reasonSelect = (e: any, data: any) => {
+    setReason(data.optionValue || "")
+    codes.forEach(code => {
+      if (code.code === data.optionValue) {
+        setFirstaid(code.firstaid)
+      }
+    })
+  }
+  
+  const doSave = () => {
+    const realSex = sex === strings.wont_tell ? 3 : sex === strings.sex_other ? 2 : sex === strings.female ? 1 : 0
+    const realAge = age === strings.youth ? 1 : age === strings.child ? 0 : 2
+    appDispatch(doLog({event_id: event.id, sex: realSex, age: realAge, reason, details, firstaid, future, destination, medicine, form, notes, usage, user, time}))
+    setFirstaid("")
+  }
+
+  useEffect(() => {
+    getEvent(event.id).then(data => {
+      setLogEntries(data.data.log_entries)
+    })
+  }, [])
+  
+  return (
+  <>
+    <Dialog>
+      <DialogTrigger><Button appearance="secondary" className={classes.root}>{strings.log_entry} / {event.name}</Button></DialogTrigger>
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{strings.add_log_entry}
+            <DialogTrigger disableButtonEnhancement>
+              <Button className={classes.headerButtons} appearance="secondary">{strings.close}</Button>
+            </DialogTrigger>
+	    <DialogTrigger>
+              <Button className={classes.headerButtons} appearance="primary" onClick={doSave} disabled={reason === ""}>{strings.save}</Button>
+	    </DialogTrigger>
+          </DialogTitle>
+          <DialogContent>
+            <Table>
+              <TableBody>
+                <TableRow>
+	          <TableCell>{strings.sex}</TableCell>
+	          <TableCell>
+	            <Dropdown value={sex} onOptionSelect={(e, data) => {setSex(data.optionValue || strings.male)}} className={classes.dropdown}>
+	              <Option>{strings.male}</Option>
+	              <Option>{strings.female}</Option>
+	              <Option>{strings.sex_other}</Option>
+	              <Option>{strings.wont_tell}</Option>
+	            </Dropdown>
+	          </TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.age}</TableCell>
+	          <TableCell>
+	            <Dropdown value={age} onOptionSelect={(e, data) => {setAge(data.optionValue || strings.adult)}} className={classes.dropdown}>
+	              <Option key="adult">{strings.adult}</Option>
+	              <Option key="youth">{strings.youth}</Option>
+	              <Option key="child">{strings.child}</Option>
+	            </Dropdown>
+	          </TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.reason}</TableCell>
+	          <TableCell>
+	            <Dropdown onOptionSelect={reasonSelect} className={classes.dropdown}>
+	              { codes.map(code => (
+  	                <Option key={code.code}>{code.code}</Option>
+	              ))}
+	            </Dropdown>
+	          </TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.reason_detail}</TableCell>
+	          <TableCell><Input onChange={(e) => {setDetails(e.target.value)}} className={classes.input}/></TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.firstaid}</TableCell>
+	          <TableCell><Input value={firstaid} onChange={(e) => {setFirstaid(e.target.value)}} className={classes.input}/></TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.future_steps}</TableCell>
+	          <TableCell><Input value={future} onChange={(e) => {setFuture(e.target.value)}} className={classes.input}/></TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.next_step}</TableCell>
+	          <TableCell><Input value={destination} onChange={(e) => {setDestination(e.target.value)}} className={classes.input}/></TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell><Checkbox label={strings.medicine_ok} onChange={(e, data) => { setMedicine(data.checked === true)}}/></TableCell>
+	          <TableCell><Checkbox label={strings.form_written} onChange={(e, data) => { setForm(data.checked === true)}} /></TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.other_notes}</TableCell>
+	          <TableCell><Input value={notes} onChange={(e) => {setNotes(e.target.value)}} className={classes.input}/></TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.usage}</TableCell>
+	          <TableCell><Input value={usage} onChange={(e) => {setUsage(e.target.value)}} className={classes.input}/></TableCell>
+	        </TableRow>
+	        <TableRow>
+	          <TableCell>{strings.log_user}</TableCell>
+	          <TableCell><Input value={user} onChange={(e) => {setUser(e.target.value)}} className={classes.input}/></TableCell>
+		</TableRow>
+	        <TableRow>
+	          <TableCell>{strings.log_time}</TableCell>
+	          <TableCell><Input value={time} onChange={(e) => {setTime(e.target.value)}} className={classes.input}/></TableCell>
+        	</TableRow>
+              </TableBody>
+            </Table>
+          </DialogContent>
+          <DialogActions>
+	    <DialogTrigger>
+              <Button appearance="primary" onClick={doSave} disabled={reason === ""}>{strings.save}</Button>
+	    </DialogTrigger>
+            <DialogTrigger disableButtonEnhancement>
+              <Button appearance="secondary">{strings.close}</Button>
+            </DialogTrigger>
+          </DialogActions>
+	</DialogBody>
+      </DialogSurface>
+    </Dialog>
+    <Dialog>
+      <DialogTrigger><Button appearance="secondary" className={classes.root}>{strings.log_entries}</Button></DialogTrigger>
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{strings.log_entries}
+            <DialogTrigger disableButtonEnhancement>
+              <Button className={classes.headerButtons} appearance="secondary">{strings.close}</Button>
+            </DialogTrigger>
+          </DialogTitle>
+          <DialogContent>
+            <Table>
+	      <TableHeader>
+                <TableHeaderCell>ID</TableHeaderCell>
+	        <TableHeaderCell>{strings.time}</TableHeaderCell>
+	        <TableHeaderCell>{strings.reason}</TableHeaderCell>
+	        <TableHeaderCell>{strings.firstaid}</TableHeaderCell>
+	        <TableHeaderCell>{strings.next_step}</TableHeaderCell>
+	        <TableHeaderCell>{strings.log_user}</TableHeaderCell>
+	      </TableHeader>
+              <TableBody>
+		{ logEntries && logEntries.map((e) => (
+		  <TableRow>
+		    <TableCell>{e.id}</TableCell>
+		    <TableCell>{e.time.split(" ")[1]}</TableCell>
+		    <TableCell>{e.reason}</TableCell>
+		    <TableCell>{e.firstaid}</TableCell>
+		    <TableCell>{e.destination}</TableCell>
+		    <TableCell>{e.user}</TableCell>
+		  </TableRow>
+		))}
+	      </TableBody>
+	    </Table>
+	  </DialogContent>
+        </DialogBody>
+      </DialogSurface>
+    </Dialog>
+  </>
+  )
+}
