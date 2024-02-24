@@ -10,6 +10,9 @@
     <allow-intent href="https://*/*" />
     <access origin="*" />
     <allow-navigation href="*"/>
+    <platform name="ios">
+      <preference name="deployment-target" value="14.0.0" />
+    </platform>
     <platform name="android">
       <preference name="AndroidInsecureFileModeEnabled" value="true" />
     </platform>
