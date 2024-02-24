@@ -1,0 +1,22 @@
+.table {
+    width: 100%;
+    max-width: 50rem;
+    min-width: 25rem;
+    text-align: left;
+    padding: 8px;
+    white-space: nowrap;
+    display: block;
+    font-family: var(--body-font-family);
+    font-size:  var(--font-size-4);
+}
+
+.head {
+    width: 100%;
+    display:table-header-group;
+    color: var(--grey);
+}
+
+.body {
+    width: 100%;
+    display: table-row-group;
+}

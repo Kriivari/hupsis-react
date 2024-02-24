@@ -1,0 +1,32 @@
+.linkInfo {
+    color: black;
+}
+
+.linkRegular {
+    text-decoration: none;
+    color: black;
+    font-size: var(--font-size-4);
+    font-family: var(--body-font-family);
+}
+
+.linkNavBar {
+    margin: 1rem;
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: var(--font-size-4);
+    font-family: var(--body-font-family);
+}
+
+.active {
+    margin: 1rem;
+    text-decoration: underline;
+    color: black;
+    font-size: var(--font-size-4);
+    font-family: var(--body-font-family);
+}
+
+@media screen and (max-width: 600px) {
+    .linkNavBar {
+        margin: 0.25rem;
+    }
+}

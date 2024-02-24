@@ -1,0 +1,28 @@
+.td  {
+    width: 100%;
+    display: table-cell;
+    margin: none;
+    white-space: nowrap;
+    border-bottom: 2px solid black;
+    padding: 1rem;
+}
+
+.td.active {
+     color: #00cc00;
+}
+
+.td.cancelled {
+    color: red;
+}
+
+.tr{
+    display: table-row;
+    width: 100%;
+    padding: 0.25rem;
+}
+
+.th {
+    width: 100%;
+    padding: 0.5rem;
+    display: table-cell;
+}
