@@ -185,153 +185,152 @@ export const Signup: React.FC<Props> = ({ event, shift, signup, multishift, isOp
   return (
       <Row>
         { (multishift || (signup && signup.user)) && (
-        <Col xs={6} sm={2}>
-          {multishift && (shift.name || formatShortTimeSpan(shift.start_time, shift.end_time))}
-	  {signup && (!signup.user || signup.user.id !== login.id) && (
-	    <div>{signup.user ? signup.user.last_name + " " + signup.user.first_name : signup.comments}</div>
-	  )}
-	</Col>
-	)}
+          <Col xs={7} sm={2}>
+            {multishift && (shift.name || formatShortTimeSpan(shift.start_time, shift.end_time))}
+	          {signup && (!signup.user || signup.user.id !== login.id) && (
+	            <div>{signup.user ? signup.user.last_name + " " + signup.user.first_name : signup.comments}</div>
+	          )}
+	        </Col>
+	      )}
         <Col xs={multishift ? 3 : 2} sm="auto">
           <ToggleButton key="coming_{realSignup ? realSignup.id : shift.id}" id={"coming_" + (realSignup ? realSignup.id : shift.id)} name="coming" value="coming" checked={coming} onClick={doComing} disabled={disabled || !isOpen} icon={coming ? <CheckmarkCircle48Filled  /> : <CheckmarkCircle48Regular />} size="large" className={coming ? classes.signupGreen : classes.signup} title="Tulen"/>
-	</Col>
+	      </Col>
         <Col xs={multishift ? 3 : 2} sm={multishift ? 2 : "auto"} md="auto">
-	  <ToggleButton key="notcoming_{realSignup ? realSignup.id : shift.id}" id={"notcoming_" + (realSignup ? realSignup.id : shift.id)} name="notcoming" value="notcoming" checked={notComing} onClick={doComing} disabled={disabled || !isOpen} icon={notComing ? <DismissCircle48Filled /> : <DismissCircle48Regular /> } size="large" className={notComing ? classes.signupRed : classes.signup} />
-	</Col>
-	<Col xs={multishift ? 6 : 7} sm="auto" className={mobile ? 'd-xs-block pt-1' : 'd-xs-block d-lg-none pt-1'}>
-	  <Dialog>
-	    <DialogTrigger><Button>{formatShortTimeSpan(realSignup ? realSignup.start_time : shift.start_time, realSignup ? realSignup.end_time : shift.end_time)}</Button></DialogTrigger>
-	    <DialogSurface className={classes.dialog}>
-	      <DialogBody>
-	        <DialogTitle className={classes.dialogTitle}><DialogTrigger><Button icon={(<DismissFilled />)} /></DialogTrigger></DialogTitle>
-		<DialogContent>
-		  <Row>
-		    <Col>
-		      <Field label={strings.start_time}>
-   	                <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={startDate} onSelectDate={setStart} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseStartTime} allowTextInput={true} showGoToToday={false} showCloseButton={true} />
-		      </Field>
-		    </Col>
-		  </Row>
-		  <Row className="pt-1">
-		    <Col>
-		      <Field label={strings.end_time}>
-   	                <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={endDate} onSelectDate={setEnd} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseEndTime} allowTextInput={true} showGoToToday={false} showCloseButton={true}/>
-		      </Field>
-		    </Col>
-		  </Row>
-                    { !signup && realSignup && coming && (
-		      <Row className="pt-1">
-		      <Col>
-	                <AddToCalendarButton
+	        <ToggleButton key="notcoming_{realSignup ? realSignup.id : shift.id}" id={"notcoming_" + (realSignup ? realSignup.id : shift.id)} name="notcoming" value="notcoming" checked={notComing} onClick={doComing} disabled={disabled || !isOpen} icon={notComing ? <DismissCircle48Filled /> : <DismissCircle48Regular /> } size="large" className={notComing ? classes.signupRed : classes.signup} />
+	      </Col>
+	      <Col xs={multishift ? 6 : 7} sm="auto" className={mobile ? 'd-xs-block pt-1' : 'd-xs-block d-lg-none pt-1'}>
+	        <Dialog>
+	          <DialogTrigger><Button>{formatShortTimeSpan(realSignup ? realSignup.start_time : shift.start_time, realSignup ? realSignup.end_time : shift.end_time)}</Button></DialogTrigger>
+	          <DialogSurface className={classes.dialog}>
+	            <DialogBody>
+	              <DialogTitle className={classes.dialogTitle}><DialogTrigger><Button icon={(<DismissFilled />)} /></DialogTrigger></DialogTitle>
+		            <DialogContent>
+		              <Row>
+		                <Col>
+		                  <Field label={strings.start_time}>
+   	                    <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={startDate} onSelectDate={setStart} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseStartTime} allowTextInput={true} showGoToToday={false} showCloseButton={true} />
+		                  </Field>
+		                </Col>
+		              </Row>
+		              <Row className="pt-1">
+		                <Col>
+		                  <Field label={strings.end_time}>
+   	                    <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={endDate} onSelectDate={setEnd} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseEndTime} allowTextInput={true} showGoToToday={false} showCloseButton={true}/>
+		                  </Field>
+		                </Col>
+		              </Row>
+                  { !signup && realSignup && coming && (
+		                <Row className="pt-1">
+		                  <Col>
+	                      <AddToCalendarButton
                           name={event.name}
                           startDate={formatCalendarDay(realSignup.start_time)}
                           startTime={formatCalendarTime(realSignup.start_time)}
                           endDate={formatCalendarDay(realSignup.end_time)}
                           endTime={formatCalendarTime(realSignup.end_time)}
-	                  timeZone="Europe/Helsinki"
-	                  location={event.location}
+	                        timeZone="Europe/Helsinki"
+	                        location={event.location}
                           options={['Apple','Google','Microsoft365','iCal']}
-	                  hideTextLabelButton
-	                  forceOverlay
-	                  listStyle="modal"
-	                  buttonStyle="3d"
-	                  size="1"
+	                        hideTextLabelButton
+	                        forceOverlay
+	                        listStyle="modal"
+	                        buttonStyle="3d"
+	                        size="1"
                         />
-	              </Col>
-		      </Row>
-	            ) }
-		</DialogContent>
-	      </DialogBody>
-	    </DialogSurface>
-	  </Dialog>
-	</Col>
+	                    </Col>
+		                </Row>
+	                ) }
+		            </DialogContent>
+	            </DialogBody>
+	          </DialogSurface>
+	        </Dialog>
+	      </Col>
         <Col xs={1} lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block pt-1'}>
-	  <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={startDate} onSelectDate={setStart} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseStartTime} allowTextInput={true} showGoToToday={false} showCloseButton={true} className={multishift ? "me-2" : "mb-2 mb-sm-0 me-sm-2"} />
-	</Col>
+	        <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={startDate} onSelectDate={setStart} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseStartTime} allowTextInput={true} showGoToToday={false} showCloseButton={true} className={multishift ? "me-2" : "mb-2 mb-sm-0 me-sm-2"} />
+	      </Col>
         <Col xs={1} lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block pt-1'}>
-	  <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={endDate} onSelectDate={setEnd} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseEndTime} allowTextInput={true} showGoToToday={false} showCloseButton={true}/>
+	        <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={endDate} onSelectDate={setEnd} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseEndTime} allowTextInput={true} showGoToToday={false} showCloseButton={true}/>
         </Col>
         { !signup && realSignup && coming && (
           <Col xs={1} lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block'}>
-	    <AddToCalendarButton
+	          <AddToCalendarButton
               name={event.name}
               startDate={formatCalendarDay(realSignup.start_time)}
               startTime={formatCalendarTime(realSignup.start_time)}
               endDate={formatCalendarDay(realSignup.end_time)}
               endTime={formatCalendarTime(realSignup.end_time)}
               timeZone="Europe/Helsinki"
-	      location={event.location}
+	            location={event.location}
               options={['Apple','Google','Microsoft365','iCal']}
-	      label="Lisää kalenteriin"
-	      hideTextLabelButton
-	      forceOverlay
-	      listStyle="modal"
-	      buttonStyle="3d"
-	      size="1"
+	            label="Lisää kalenteriin"
+	            hideTextLabelButton
+	            forceOverlay
+	            listStyle="modal"
+	            buttonStyle="3d"
+	            size="1"
             />
-	  </Col>
-	) }
-          { event.type_id === 1 && event.owner_group.firstaid && !event.hide_travel_costs && (
-	    <Col xs={multishift ? 3 : 2} sm="auto" className="pt-1 pb-2 pb-sm-0">
-	      <Dialog>
-	        <DialogTrigger>
-		  <Button icon={<PersonWalkingRegular />} className="me-2 mb-md-0" />
-		</DialogTrigger>
-		<DialogSurface className={classes.dialog}>
-		  <DialogBody>
-  	            <DialogTitle className={classes.dialogTitle}><DialogTrigger><Button icon={(<DismissFilled />)} /></DialogTrigger></DialogTitle>
-		    <DialogContent>
-		      <Field label={strings.mileage}>
-  	                <Input id="mileage" name="mileage" type="text" value={mileage ? "" + mileage : ""} onChange={changeMileage} className={classes.mileage}/>
-		      </Field>
-		      <Field label={strings.explanation}>
- 	                <Input id="costExplanation" name="costExplanation" type="text" value={costExplanation} onChange={changeCostExplanation} className={classes.root}/>
-		      </Field>
-		    </DialogContent>
-		  </DialogBody>
-		</DialogSurface>
-	      </Dialog>
-	    </Col>
-	) }
-	<Col xs={multishift ? 3 : 2} sm="auto" className="pt-1 pb-2 pb-sm-0">
-	      <Dialog>
-	        <DialogTrigger>
-		  <Button icon={<CommentRegular />} />
-		</DialogTrigger>
-		<DialogSurface className={classes.dialog}>
-		  <DialogBody>
+	        </Col>
+	      ) }
+        { event.type_id === 1 && event.owner_group.firstaid && !event.hide_travel_costs && (
+	        <Col xs={multishift ? 3 : 2} sm="auto" className="pt-1 pb-2 pb-sm-0">
+	          <Dialog>
+	            <DialogTrigger>
+		            <Button icon={<PersonWalkingRegular />} className="me-2 mb-md-0" />
+		          </DialogTrigger>
+		          <DialogSurface className={classes.dialog}>
+		            <DialogBody>
+  	              <DialogTitle className={classes.dialogTitle}><DialogTrigger><Button icon={(<DismissFilled />)} /></DialogTrigger></DialogTitle>
+		              <DialogContent>
+		                <Field label={strings.mileage}>
+  	                  <Input id="mileage" name="mileage" type="text" value={mileage ? "" + mileage : ""} onChange={changeMileage} className={classes.mileage}/>
+		                </Field>
+		                <Field label={strings.explanation}>
+ 	                    <Input id="costExplanation" name="costExplanation" type="text" value={costExplanation} onChange={changeCostExplanation} className={classes.root}/>
+		                </Field>
+		              </DialogContent>
+		            </DialogBody>
+		          </DialogSurface>
+	          </Dialog>
+	        </Col>
+	      ) }
+	      <Col xs={multishift ? 3 : 2} sm="auto" className="pt-1 pb-2 pb-sm-0">
+	        <Dialog>
+	          <DialogTrigger>
+		          <Button icon={<CommentRegular />} />
+		        </DialogTrigger>
+		        <DialogSurface className={classes.dialog}>
+		          <DialogBody>
   	            <DialogTitle><Row><Col xs={9}>{strings.comments}</Col><Col><DialogTrigger><Button icon={(<DismissFilled />)} /></DialogTrigger></Col></Row></DialogTitle>
-		    <DialogContent>
-                      <Textarea id="comments" name="comments" value={comments} onChange={changeComments} disabled={hidden} className={classes.textArea}/>
-		    </DialogContent>
-		  </DialogBody>
-		</DialogSurface>
-	      </Dialog>
+		            <DialogContent>
+                  <Textarea id="comments" name="comments" value={comments} onChange={changeComments} disabled={hidden} className={classes.textArea}/>
+		            </DialogContent>
+		          </DialogBody>
+		        </DialogSurface>
+	        </Dialog>
+        </Col>
+	      { realSignup && coming && (
+	        <Col xs="auto" className="pt-1 pb-sm-2 pb-lg-0 float-end">
+	          <>
+	            { editable ? (
+	              <ToggleButton key="confirmed" checked={confirmed || leader} onClick={doConfirmed}>{ leader ? strings.leader : (confirmed ? strings.confirmed : strings.confirm) }</ToggleButton>
+	            ) : (
+	              <span>{leader ? strings.leader : (confirmed && strings.confirmed)}</span>
+	            )}
+	            { realSignup.trainee && (<span> {strings.trainee} </span>) }
+	          </>
           </Col>
-	  { realSignup && coming && (
-	  <Col xs="auto" className="pt-1 pb-sm-2 pb-lg-0 float-end">
-	  <>
-	  { editable ? (
-	    <ToggleButton key="confirmed" checked={confirmed || leader} onClick={doConfirmed}>{ leader ? strings.leader : (confirmed ? strings.confirmed : strings.confirm) }</ToggleButton>
-	  ) : (
-	    <span>{leader ? strings.leader : (confirmed && strings.confirmed)}</span>
-	  )}
-	  { realSignup.trainee && (<span> {strings.trainee} </span>) }
-	  </>
-          </Col>
-	  )
-	  }
-	<Col xs={3} sm="1" className="pt-1 d-sm-none">
-	  <Button key="save" icon={<CheckmarkFilled />} className={classes.green} hidden={hideSave} onClick={saveChanges} />
-	</Col>
-	<Col xs={3} sm="1" className="pt-1 d-sm-none">
-	  <Button key="cancel" icon={<DismissFilled />} className={classes.red} hidden={hideSave} onClick={cancelChanges} />
-	</Col>
-	<Col xs={1} sm="auto" className="d-none d-sm-block pt-1 pull-right">
-	  <Button key="save" icon={<CheckmarkFilled />} className={classes.green} hidden={hideSave} onClick={saveChanges} />
-	  <Button key="cancel" icon={<DismissFilled />} className={classes.red} hidden={hideSave} onClick={cancelChanges} />
-	</Col>
-      </Row>
+	      ) }
+	    <Col xs={3} sm="1" className="pt-1 d-sm-none">
+	      <Button key="save" icon={<CheckmarkFilled />} className={classes.green} hidden={hideSave} onClick={saveChanges} />
+	    </Col>
+	    <Col xs={3} sm="1" className="pt-1 d-sm-none">
+	      <Button key="cancel" icon={<DismissFilled />} className={classes.red} hidden={hideSave} onClick={cancelChanges} />
+	    </Col>
+	    <Col xs={1} sm="auto" className="d-none d-sm-block pt-1 pull-right">
+	      <Button key="save" icon={<CheckmarkFilled />} className={classes.green} hidden={hideSave} onClick={saveChanges} />
+	      <Button key="cancel" icon={<DismissFilled />} className={classes.red} hidden={hideSave} onClick={cancelChanges} />
+	    </Col>
+    </Row>
   )
 
 }
