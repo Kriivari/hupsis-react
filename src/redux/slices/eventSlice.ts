@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { Code, EventData, GetEventData } from "../../services/models"
+import { Code, EventData, GetEventData, LogResponse } from "../../services/models"
 import { doSignup, deleteSignup, changeSignup, getAll, getMore, getCodes, doLog, doEventLog } from "../../services/events"
 
 type EventsState = {
@@ -9,6 +9,7 @@ type EventsState = {
   loading: number
   calendar: boolean
   search: string
+  currentLogId: number
 }
 
 const dayjs = require("dayjs-with-plugins")
@@ -20,6 +21,7 @@ const initialState: EventsState = {
   loading: -1,
   calendar: false,
   search: "",
+  currentLogId: -1,
 }
 
 const updateEvents = (state: EventsState, action: PayloadAction<EventData>) => {
@@ -100,18 +102,18 @@ export const eventsSlice = createSlice({
         state.events = payload
       } else if (payload.length > 0) {
         let payloadIndex = 0
-	const ids = state.events.map(e => e.id)
-	let filtered = payload.filter(e => ids.indexOf(e.id) === -1)
+	      const ids = state.events.map(e => e.id)
+	      let filtered = payload.filter(e => ids.indexOf(e.id) === -1)
         for (let i = 0; i < state.events.length; i++) {
-	  const currentStart = dayjs(state.events[i].start_time).toDate()
-	  for (; payloadIndex < filtered.length; payloadIndex++) {
-	    const payloadStart = dayjs(filtered[payloadIndex].start_time).toDate()
-	    if (payloadStart > currentStart) {
-	      break;
+	        const currentStart = dayjs(state.events[i].start_time).toDate()
+	        for (; payloadIndex < filtered.length; payloadIndex++) {
+	          const payloadStart = dayjs(filtered[payloadIndex].start_time).toDate()
+	          if (payloadStart > currentStart) {
+	            break;
             }
-	    state.events.splice(i, 0, filtered[payloadIndex])
-	  }
-	}
+	          state.events.splice(i, 0, filtered[payloadIndex])
+	        }
+	      }
       }
     })
     .addCase(doSignup.rejected, (state) => {
@@ -126,7 +128,9 @@ export const eventsSlice = createSlice({
       state.loading = -1
     })
     .addCase(changeSignup.fulfilled, updateEvents)
-    .addCase(doLog.fulfilled, updateEvents)
+    .addCase(doLog.fulfilled, (state: EventsState, action: PayloadAction<LogResponse>) => {
+      state.currentLogId = action.payload.id
+    })
     .addCase(doEventLog.fulfilled, updateEvents)
   }
 })

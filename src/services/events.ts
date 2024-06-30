@@ -1,12 +1,26 @@
 import axios from "axios"
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { Dates, EventData, EventUserData, SignupData, LogEntryData, EventLogEntryData } from "./models"
+import { Dates, EventData, EventUserData, SignupData, LogEntryData, EventLogEntryData, EventMessage } from "./models"
 import { getURL } from "../util"
 
 axios.defaults.withCredentials = false
 const baseUrl = getURL("events")
 const signupUrl = getURL("event_users")
 const codesUrl = getURL("entry_codes")
+
+export const doNotifyParticipants = createAsyncThunk(
+  "events/notify_participants",
+  async (message: EventMessage, thunkAPI) => {
+    const res = await axios.post(baseUrl + "/" + message.eventId + "/send_notification",
+      { "event": {
+        "shifts": message.shifts,
+        "subject": message.title,
+        "message": message.content,
+        "distribution": message.distribution
+      }})
+    return res.data
+  }
+)
 
 export const getCodes = createAsyncThunk(
   "events/codes",
@@ -23,7 +37,7 @@ export const doLog = createAsyncThunk(
       { "log": entry,
         "commit": "save"
       })
-    return res.data
+    return {id: res.data}
   }
 )
 
@@ -54,7 +68,7 @@ export const getAll = createAsyncThunk(
     dirty.forEach(ev => {
       if (!ids.includes(ev.id)) {
         ids.push(ev.id)
-	cleaned.push(ev)
+	      cleaned.push(ev)
       }
     })
     return {events: cleaned, startDate: dates.start.toISOString().split("T")[0]}
@@ -72,7 +86,7 @@ export const getMore = createAsyncThunk(
     dirty.forEach(ev => {
       if (!ids.includes(ev.id)) {
         ids.push(ev.id)
-	cleaned.push(ev)
+	      cleaned.push(ev)
       }
     })
     return {events: cleaned, startDate: dates.start.toISOString().split("T")[0]}
@@ -92,7 +106,7 @@ export const doSignup = createAsyncThunk(
           "comments": comments,
           "start_time": startTime,
           "end_time": endTime,
-	  "role_id": roleId
+	        "role_id": roleId
         },
       })
     } else {
@@ -103,7 +117,7 @@ export const doSignup = createAsyncThunk(
           "comments": comments,
           "start_time": startTime,
           "end_time": endTime,
-	  "role_id": roleId
+	        "role_id": roleId
         },
         "commit": "signup"
       })
@@ -133,9 +147,9 @@ export const changeSignup = createAsyncThunk(
     { "event_user":
       {
         "mileage": mileage,
-	"cost_explanation": cost_explanation,
+	      "cost_explanation": cost_explanation,
         "comments": comments,
-	"confirmed": confirmed,
+	      "confirmed": confirmed,
         "start_time": startTime,
         "end_time": endTime,
         "role_id": (type === "notcoming" ? 16 : roleId)

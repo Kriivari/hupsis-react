@@ -38,6 +38,10 @@ export interface EventLogEntryData {
   user: string
   time: string
 }
+
+export interface LogResponse {
+  id: number
+}
   
 export interface QualificationData {
   id: number
@@ -110,7 +114,7 @@ export interface GroupData {
 export interface UserGroupData {
   id: number
   name: string
-  role_id: number
+  role: number
 }
 
 export interface EventShiftData {
@@ -119,6 +123,9 @@ export interface EventShiftData {
   name: string
   start_time: Date
   end_time: Date
+  close_time: Date
+  close_cancellations_time: Date
+  is_open: boolean
   required: number
   missing: number
   qualification_id: number
@@ -168,3 +175,10 @@ export interface SignupData {
   type: string
 }
 
+export interface EventMessage {
+  eventId: number
+  shifts?: string[]
+  title?: string
+  content: string
+  distribution: number
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, Input, Title2, makeStyles, tokens } from '@fluentui/react-components'
+import { Button, Card, Dialog, DialogTrigger, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions, Input, Title2, makeStyles, tokens } from '@fluentui/react-components'
 import { login } from "../services/users"
 import { useAppDispatch } from "../hooks"
 import { doLogin } from "../redux/slices/loginSlice"
@@ -26,6 +26,7 @@ const useStyles = makeStyles({
 export const Login = () => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
+  const [errorOpen, setErrorOpen] = React.useState(false)
   
   const handleLogin = (formEvent: FormElem): void => {
     const email = (formEvent.currentTarget.elements[0] as HTMLInputElement).value
@@ -36,12 +37,7 @@ export const Login = () => {
         dispatch(doLogin(data))
       },
       error => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString()
+        setErrorOpen(true)
       }
     );
     formEvent.preventDefault()
@@ -51,10 +47,25 @@ export const Login = () => {
     <Card className={classes.root}>
       <Title2 className={classes.root}>{ strings.sign_in }</Title2>
       <form onSubmit={handleLogin}>
-	<Input id="email" name="email" placeholder={strings.email} type="text" className={classes.input}/><br />
+	      <Input id="email" name="email" placeholder={strings.email} type="text" className={classes.input}/><br />
         <Input id="password" name="password" type="password" placeholder={strings.password} className={classes.input}/><br />
         <Button type="submit" className={classes.submit}>{ strings.sign_in_button }</Button>
       </form>
+      <Dialog open={errorOpen} onOpenChange={(event, data) => setErrorOpen(data.open)}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Kirjautuminen epäonnistui</DialogTitle>
+            <DialogContent>
+              Varmista käyttäjätunnuksesi ja salasanasi.
+            </DialogContent>
+            <DialogActions>
+              <DialogTrigger disableButtonEnhancement>
+                <Button appearance="secondary">Sulje</Button>
+              </DialogTrigger>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </Card>
   )
 }
