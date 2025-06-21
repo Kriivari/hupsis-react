@@ -30,6 +30,22 @@ export const getCodes = createAsyncThunk(
   }
 )
 
+export const getPositions = createAsyncThunk(
+  "events/positions",
+  async (id: number, thunkAPI) => {
+    const res = await axios.get(baseUrl + "/" + id + "/locations.json")
+    return res.data
+  }
+)
+
+export const getPositionsByCode = createAsyncThunk(
+    "events/positionsbycode",
+    async (id: string, thunkAPI) => {
+        const res = await axios.get(getURL("locations.json") + "?code=" + id)
+        return res.data
+    }
+)
+
 export const doLog = createAsyncThunk(
   "events/log",
   async (entry: LogEntryData, thunkAPI) => {

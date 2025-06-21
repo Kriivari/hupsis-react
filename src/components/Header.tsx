@@ -11,9 +11,13 @@ import { Avatar, Button, Link, Menu, MenuItem, MenuItemLink, MenuList, MenuPopov
 import { Calendar24Regular, MoreHorizontal24Filled, TextBulletListLtr24Filled } from "@fluentui/react-icons"
 import { SearchBox } from '@fluentui/react-search-preview'
 import { getAll } from "./../services/events"
+import { positioning } from "./../services/users"
 import { NextEvent } from "./NextEvent"
 import { LogEntry } from "./LogEntry"
 import { EventLogEntry } from "./EventLogEntry"
+import { LogList } from "./LogList"
+import { EventLogList } from "./EventLogList"
+import { Positioning } from "./Positioning"
 
 interface Props {
   mobile: boolean
@@ -87,6 +91,10 @@ export const Header: React.FC<Props> = ({ mobile, width }) => {
   const avatar = user.email ? {src: "https://gravatar.com/avatar/" + createHash('sha256').update(user.email.toLowerCase().trim()).digest('hex')} : {}
   const classes = useStyles()
 
+  if (currentEvent) {
+    positioning(currentEvent.event_users.filter(eu => eu.user && eu.user.id === user.id)[0].id, user.first_name)
+  }
+  
   const doLogout = async () => {
     await appDispatch(logout())
     await appDispatch(clearEvents())
@@ -127,10 +135,13 @@ export const Header: React.FC<Props> = ({ mobile, width }) => {
     </Toolbar>
     { currentEvent && (
       <>
-        <div className={classes.logentry}><LogEntry event={currentEvent} /></div>
-        <div className={classes.logentry}><EventLogEntry event={currentEvent} /></div>
+        <span className={classes.logentry}><LogEntry event={currentEvent} short={false}/></span>
+        <span className={classes.logentry}><EventLogEntry event={currentEvent} short={false}/></span>
+        <span className={classes.logentry}><LogList event={currentEvent} /></span>
+        <span className={classes.logentry}><EventLogList event={currentEvent} /></span>
+        <span className={classes.logentry}><Positioning event={currentEvent} /></span>
       </>
-    )}
+    ) }
     <Table className={classes.table}>
       <TableBody>
         <TableRow className={classes.table}>

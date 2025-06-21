@@ -16,7 +16,6 @@ export interface Code {
 export interface LogEntryData {
   event_id?: number
   id?: number
-  sex: number
   age: number
   reason: string
   details?: string
@@ -37,6 +36,8 @@ export interface EventLogEntryData {
   entry: string
   user: string
   time: string
+  latitude?: number
+  longitude?: number
 }
 
 export interface LogResponse {
@@ -151,6 +152,9 @@ export interface EventUserData {
   mileage: number
   perdiem: number
   cost_explanation: string
+  nickname: string
+  latitude: string
+  longitude: string
   home_groups: Group[]
   subroles: string[]
   user: UserData
@@ -181,4 +185,16 @@ export interface EventMessage {
   title?: string
   content: string
   distribution: number
+}
+
+export interface Position {
+  latitude: number
+  longitude: number
+  nickname: string
+  id?: number
+}
+
+export interface PositionsLogs {
+  locations: Position[]
+  logs: EventLogEntryData[]
 }

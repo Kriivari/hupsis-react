@@ -16,6 +16,7 @@ interface ParticipantProps {
 }
 
 const ParticipantTable: React.FC<ParticipantProps> = ({ mobile, popup, editable, userId, event, participants, notcoming }) => {
+console.log(event.name, notcoming)
   return editable ? (
       <Card>
         { event.event_shifts.map((shift: EventShiftData) => shift.event_users.map((signup: EventUserData) => (

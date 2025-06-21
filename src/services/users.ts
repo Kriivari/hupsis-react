@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
+import BackgroundGeolocation from "../../node_modules/cordova-background-geolocation-plugin"
 import axios from "axios"
 import { getURL } from "../util"
 import { UserData } from "./models"
@@ -11,7 +12,7 @@ const calendar = async (state: boolean): Promise<boolean> => {
 }
 
 const login = async (email: string, password: string): Promise<UserData> => {
-  console.log("Signing in")
+  stopPositioning()
   const res = await axios.post(baseUrl + "users/sign_in.json", {email: email, password: password}, {auth: {username: email, password: password}})
   const user = res.data
   user.password = password
@@ -25,6 +26,7 @@ const login = async (email: string, password: string): Promise<UserData> => {
 const logout = createAsyncThunk(
   "users/logout",
   async (thunkAPI) => {
+    stopPositioning()
     axios.interceptors.request.clear()
     const res = await axios.delete(baseUrl + "users/sign_out.json")
     return res.data
@@ -33,20 +35,17 @@ const logout = createAsyncThunk(
   
 // returns all users in the database
 const getAll = async (): Promise<UserData[]> => {
-  const res = await axios.get(baseUrl)
-  return res.data
+  return await axios.get(baseUrl)
 }
 
 // returns user with the given username
 const getByUsername = async (username: string): Promise<UserData> => {
-  const res = await axios.get(`${baseUrl}/${username}`)
-  return res.data
+  return await axios.get(`${baseUrl}/${username}`)
 }
 
 // returns users with the given email
 const getByEmail = async (email: string): Promise<UserData[]> => {
-  const res = await axios.get(`${baseUrl}/search?email=${email}`)
-  return res.data
+  return await axios.get(`${baseUrl}/search?email=${email}`)
 }
 
 // creates new user
@@ -64,9 +63,38 @@ const createUser = async (
     ldap: login,
     email
   }
-  const res = await axios.post(baseUrl, newUser)
-  return res
+  return await axios.post(baseUrl, newUser)
 }
 
-export { getAll, getByUsername, getByEmail, createUser, login, logout, calendar  }
+const positioning = (id: number, nick: string, code?: string) => {
+      BackgroundGeolocation.configure({
+        locationProvider: BackgroundGeolocation.DISTANCE_FILTER_PROVIDER,
+        desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
+        stationaryRadius: 10,
+        distanceFilter: 10,
+        notificationTitle: 'Background tracking',
+        notificationText: 'enabled',
+        debug: false,
+        stopOnTerminate: true,
+        interval: 10000,
+        fastestInterval: 5000,
+        activitiesInterval: 10000,
+        url: getURL('location.json'),
+        // customize post properties
+        postTemplate: {
+            latitude: '@latitude',
+            longitude: '@longitude',
+            id: id,
+            nickname: nick,
+	        code: code
+        }
+      })
+    BackgroundGeolocation.start()
+}
+
+const stopPositioning = () => {
+    BackgroundGeolocation.stop()
+}
+
+export { getAll, getByUsername, getByEmail, createUser, login, logout, calendar, positioning, stopPositioning }
 

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { logout } from "./../services/users"
+import {logout, stopPositioning} from "../services/users"
 import { clearEvents } from "../redux/slices/eventSlice"
-import { useAppDispatch } from "./../hooks"
+import { useAppDispatch } from "../hooks"
 
 const Logout = () => {
   const appDispatch = useAppDispatch();

@@ -1,19 +1,28 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="eu.hupsis.Hupsis" version="3.0.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="eu.hupsis.Hupsis" version="3.0.17" android-versionCode="20250625" ios-CFBundleVersion="20250625" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>hupsismobile</name>
     <description>Hupsis Cordova App</description>
-    <author email="kalle.kivimaa@iki.fi" href="https://kivimaa.fi">
-        Kalle Kivimaa
-    </author>
+    <author email="kalle.kivimaa@iki.fi" href="https://kivimaa.fi">Kalle Kivimaa</author>
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <access origin="*" />
     <allow-navigation href="*"/>
     <platform name="ios">
+      <icon src="icons/icon-1024.png" width="1024" height="1024"/>
+      <icon src="icons/icon-167.png" width="167" height="167"/>
+      <icon src="icons/icon-152.png" width="152" height="152"/>
+      <icon src="icons/icon-120.png" width="120" height="120"/>
       <preference name="deployment-target" value="14.0.0" />
     </platform>
     <platform name="android">
+      <icon src="www/logo192.png" />
       <preference name="AndroidInsecureFileModeEnabled" value="true" />
     </platform>
+    <edit-config target="ITSAppUsesNonExemptEncryption" file="*-Info.plist" mode="merge">
+      <string>NO</string>
+    </edit-config>
+    <edit-config target="NSLocationAlwaysAndWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
+      <string>Hupsis käyttää sijaintitietoa päivystysten tilannekuvan näyttämiseen. Sijaintitieto välitetään myös sovelluksen ollessa taustalla.</string>
+    </edit-config>
 </widget>

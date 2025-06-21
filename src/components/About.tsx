@@ -9,6 +9,7 @@ export const About: React.FC<{}> = props => {
 	Käyttöliittymä on puutteellinen, aidon version
 	löydät <a href="https://paivystykset.punainenristi.fi/">täältä</a>.
       </p>
+      <p id="geolocation">Tähän pitäisi tulla paikannustieto.</p>
     </>
   )
 }

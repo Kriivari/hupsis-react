@@ -184,21 +184,19 @@ export const Signup: React.FC<Props> = ({ event, shift, signup, multishift, isOp
   
   return (
       <Row>
-        { (multishift || (signup && signup.user)) && (
-          <Col xs={7} sm={2}>
+          <Col xs="6" md="2">
             {multishift && (shift.name || formatShortTimeSpan(shift.start_time, shift.end_time))}
 	          {signup && (!signup.user || signup.user.id !== login.id) && (
 	            <div>{signup.user ? signup.user.last_name + " " + signup.user.first_name : signup.comments}</div>
 	          )}
 	        </Col>
-	      )}
-        <Col xs={multishift ? 3 : 2} sm="auto">
+        <Col xs="3" md="auto">
           <ToggleButton key="coming_{realSignup ? realSignup.id : shift.id}" id={"coming_" + (realSignup ? realSignup.id : shift.id)} name="coming" value="coming" checked={coming} onClick={doComing} disabled={disabled || !isOpen} icon={coming ? <CheckmarkCircle48Filled  /> : <CheckmarkCircle48Regular />} size="large" className={coming ? classes.signupGreen : classes.signup} title="Tulen"/>
 	      </Col>
-        <Col xs={multishift ? 3 : 2} sm={multishift ? 2 : "auto"} md="auto">
+        <Col xs="3" md="auto">
 	        <ToggleButton key="notcoming_{realSignup ? realSignup.id : shift.id}" id={"notcoming_" + (realSignup ? realSignup.id : shift.id)} name="notcoming" value="notcoming" checked={notComing} onClick={doComing} disabled={disabled || !isOpen} icon={notComing ? <DismissCircle48Filled /> : <DismissCircle48Regular /> } size="large" className={notComing ? classes.signupRed : classes.signup} />
 	      </Col>
-	      <Col xs={multishift ? 6 : 7} sm="auto" className={mobile ? 'd-xs-block pt-1' : 'd-xs-block d-lg-none pt-1'}>
+	      <Col xs="6" md="auto" className={mobile ? 'd-xs-block pt-1' : 'd-xs-block d-lg-none pt-1'}>
 	        <Dialog>
 	          <DialogTrigger><Button>{formatShortTimeSpan(realSignup ? realSignup.start_time : shift.start_time, realSignup ? realSignup.end_time : shift.end_time)}</Button></DialogTrigger>
 	          <DialogSurface className={classes.dialog}>
@@ -245,14 +243,14 @@ export const Signup: React.FC<Props> = ({ event, shift, signup, multishift, isOp
 	          </DialogSurface>
 	        </Dialog>
 	      </Col>
-        <Col xs={1} lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block pt-1'}>
+        <Col xs="1" lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block pt-1'}>
 	        <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={startDate} onSelectDate={setStart} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseStartTime} allowTextInput={true} showGoToToday={false} showCloseButton={true} className={multishift ? "me-2" : "mb-2 mb-sm-0 me-sm-2"} />
 	      </Col>
-        <Col xs={1} lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block pt-1'}>
+        <Col xs="1" lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block pt-1'}>
 	        <DatePicker minDate={getDate(shift.start_time)} maxDate={getDate(shift.end_time)} value={endDate} onSelectDate={setEnd} formatDate={multiDay ? formatISO : formatHupsisTimePart} disabled={!isOpen} isMonthPickerVisible={false} type={multiDay ? "datetime-local" : "time"} parseDateFromString={parseEndTime} allowTextInput={true} showGoToToday={false} showCloseButton={true}/>
         </Col>
         { !signup && realSignup && coming && (
-          <Col xs={1} lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block'}>
+          <Col xs="1" lg="auto" className={mobile ? 'd-none' : 'd-none d-lg-block'}>
 	          <AddToCalendarButton
               name={event.name}
               startDate={formatCalendarDay(realSignup.start_time)}
@@ -272,7 +270,7 @@ export const Signup: React.FC<Props> = ({ event, shift, signup, multishift, isOp
 	        </Col>
 	      ) }
         { event.type_id === 1 && event.owner_group.firstaid && !event.hide_travel_costs && (
-	        <Col xs={multishift ? 3 : 2} sm="auto" className="pt-1 pb-2 pb-sm-0">
+	        <Col xs="3" md="auto" className="pt-1 pb-2 pb-sm-0">
 	          <Dialog>
 	            <DialogTrigger>
 		            <Button icon={<PersonWalkingRegular />} className="me-2 mb-md-0" />
@@ -293,7 +291,7 @@ export const Signup: React.FC<Props> = ({ event, shift, signup, multishift, isOp
 	          </Dialog>
 	        </Col>
 	      ) }
-	      <Col xs={multishift ? 3 : 2} sm="auto" className="pt-1 pb-2 pb-sm-0">
+	      <Col xs="3" md="auto" className="pt-1 pb-2 pb-sm-0">
 	        <Dialog>
 	          <DialogTrigger>
 		          <Button icon={<CommentRegular />} />
@@ -320,13 +318,13 @@ export const Signup: React.FC<Props> = ({ event, shift, signup, multishift, isOp
 	          </>
           </Col>
 	      ) }
-	    <Col xs={3} sm="1" className="pt-1 d-sm-none">
+	    <Col xs="3" sm="1" className="pt-1 d-sm-none">
 	      <Button key="save" icon={<CheckmarkFilled />} className={classes.green} hidden={hideSave} onClick={saveChanges} />
 	    </Col>
-	    <Col xs={3} sm="1" className="pt-1 d-sm-none">
+	    <Col xs="3" sm="1" className="pt-1 d-sm-none">
 	      <Button key="cancel" icon={<DismissFilled />} className={classes.red} hidden={hideSave} onClick={cancelChanges} />
 	    </Col>
-	    <Col xs={1} sm="auto" className="d-none d-sm-block pt-1 pull-right">
+	    <Col xs="1" sm="auto" className="d-none d-sm-block pt-1 pull-right">
 	      <Button key="save" icon={<CheckmarkFilled />} className={classes.green} hidden={hideSave} onClick={saveChanges} />
 	      <Button key="cancel" icon={<DismissFilled />} className={classes.red} hidden={hideSave} onClick={cancelChanges} />
 	    </Col>

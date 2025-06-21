@@ -8,6 +8,9 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, AccordionTog
 import type { DropdownProps, InputProps } from "@fluentui/react-components"
 import { ParticipantTable } from "./ParticipantTable"
 import { LogEntry } from "./LogEntry"
+import { LogList } from "./LogList"
+import { EventLogEntry } from "./EventLogEntry"
+import { EventLogList } from "./EventLogList"
 import { Signup } from "./Signup"
 import { Avatars } from "./Avatars"
 import { EventData, EventShiftData } from "../services/models"
@@ -160,7 +163,14 @@ const EventDetails: React.FC<Props> = ({ id, mobile, popup }) => {
           <TableRow key={event.id + '-details'}>
             <TableCell colSpan={mobile ? 2 : 6}>
             { currentEvent && (
-              <div className="mb-2"><LogEntry event={event} /></div>
+              <>
+                <div className="mb-2">
+                  <span><LogEntry event={event} short={true}/></span>
+                  <span><LogList event={event} /></span>
+                  <span><EventLogEntry event={event} short={true}/></span>
+                  <span><EventLogList event={event} /></span>
+                </div>
+              </>
             ) }
             { (event.is_open || mySignups.length > 0) && (
               <Card key={event.id + "-card"}>
