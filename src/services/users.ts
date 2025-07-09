@@ -8,93 +8,113 @@ axios.defaults.withCredentials = true
 const baseUrl = getURL('')
 
 const calendar = async (state: boolean): Promise<boolean> => {
-  return state
+    return state
 }
 
 const login = async (email: string, password: string): Promise<UserData> => {
-  stopPositioning()
-  const res = await axios.post(baseUrl + "users/sign_in.json", {email: email, password: password}, {auth: {username: email, password: password}})
-  const user = res.data
-  user.password = password
-  axios.interceptors.request.use((config) => {
-    config.auth = {username: email, password: password}
-    return config
-  })
-  return user
+    stopPositioning()
+    const res = await axios.post(baseUrl + "users/sign_in.json", {email: email, password: password}, {auth: {username: email, password: password}})
+    const user = res.data
+    user.password = password
+    axios.interceptors.request.use((config) => {
+        config.auth = {username: email, password: password}
+        return config
+    })
+    return user
 }
 
 const logout = createAsyncThunk(
-  "users/logout",
-  async (thunkAPI) => {
-    stopPositioning()
-    axios.interceptors.request.clear()
-    const res = await axios.delete(baseUrl + "users/sign_out.json")
-    return res.data
-  }
+    "users/logout",
+    async (thunkAPI) => {
+        stopPositioning()
+        axios.interceptors.request.clear()
+        const res = await axios.delete(baseUrl + "users/sign_out.json")
+        return res.data
+    }
 )
-  
+
 // returns all users in the database
 const getAll = async (): Promise<UserData[]> => {
-  return await axios.get(baseUrl)
+    return await axios.get(baseUrl)
 }
 
 // returns user with the given username
 const getByUsername = async (username: string): Promise<UserData> => {
-  return await axios.get(`${baseUrl}/${username}`)
+    return await axios.get(`${baseUrl}/${username}`)
 }
 
 // returns users with the given email
 const getByEmail = async (email: string): Promise<UserData[]> => {
-  return await axios.get(`${baseUrl}/search?email=${email}`)
+    return await axios.get(`${baseUrl}/search?email=${email}`)
 }
 
 // creates new user
 const createUser = async (
-  id: number,
-  firstName: string,
-  lastName: string,
-  login: string,
-  email: string
+    id: number,
+    firstName: string,
+    lastName: string,
+    login: string,
+    email: string
 ) => {
-  const newUser = {
-    id,
-    firstName,
-    lastName,
-    ldap: login,
-    email
-  }
-  return await axios.post(baseUrl, newUser)
+    const newUser = {
+        id,
+        firstName,
+        lastName,
+        ldap: login,
+        email
+    }
+    return await axios.post(baseUrl, newUser)
 }
 
+let watchID: number | null = null;
+
 const positioning = (id: number, nick: string, code?: string) => {
-      BackgroundGeolocation.configure({
-        locationProvider: BackgroundGeolocation.DISTANCE_FILTER_PROVIDER,
-        desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-        stationaryRadius: 10,
-        distanceFilter: 10,
-        notificationTitle: 'Background tracking',
-        notificationText: 'enabled',
-        debug: false,
-        stopOnTerminate: true,
-        interval: 10000,
-        fastestInterval: 5000,
-        activitiesInterval: 10000,
-        url: getURL('location.json'),
-        // customize post properties
-        postTemplate: {
-            latitude: '@latitude',
-            longitude: '@longitude',
-            id: id,
-            nickname: nick,
-	        code: code
-        }
-      })
-    BackgroundGeolocation.start()
+    BackgroundGeolocation.configure({
+            locationProvider: BackgroundGeolocation.DISTANCE_FILTER_PROVIDER,
+            desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
+            stationaryRadius: 10,
+            distanceFilter: 10,
+            notificationTitle: 'Background tracking',
+            notificationText: 'enabled',
+            debug: false,
+            stopOnTerminate: true,
+            interval: 10000,
+            fastestInterval: 5000,
+            activitiesInterval: 10000,
+            url: getURL('location.json'),
+            // customize post properties
+            postTemplate: {
+                latitude: '@latitude',
+                longitude: '@longitude',
+                id: id,
+                nickname: nick,
+                code: code
+            }
+        },
+        () => {
+            BackgroundGeolocation.start()
+        },
+        () => {
+            watchID = navigator.geolocation.watchPosition((position) => {
+                console.log(position)
+                axios.post(getURL('location.json'),
+                    {latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        id: id,
+                        nickname: nick,
+                        code: code})
+            });
+        })
 }
 
 const stopPositioning = () => {
-    BackgroundGeolocation.stop()
+    if (watchID) {
+        navigator.geolocation.clearWatch(watchID);
+        watchID = null;
+    } else {
+        BackgroundGeolocation.stop()
+    }
 }
 
-export { getAll, getByUsername, getByEmail, createUser, login, logout, calendar, positioning, stopPositioning }
+export { getAll, getByUsername, getByEmail, createUser, login, logout, calendar, positioning, stopPositioning, watchID }
 

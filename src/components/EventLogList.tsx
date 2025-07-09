@@ -34,7 +34,7 @@ export const EventLogList: React.FC<Props> = ({event}) => {
     getEvent(event.id).then(data => {
       setLogEntries(data.data.event_log_entries)
     })
-  }, [])
+  }, [event.id])
   
   return (
     <Dialog>

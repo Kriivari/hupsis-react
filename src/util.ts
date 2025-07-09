@@ -5,7 +5,7 @@ const dayjs = require("dayjs-with-plugins")
 export function getURL(postfix: string): string {
   const baseURL = process.env.REACT_APP_BASE_URL
     ? process.env.REACT_APP_BASE_URL
-    : "https://dev.hupsis.eu"
+    : "https://paivystykset.punainenristi.fi"
   //const baseURL = 'http://localhost:3000'
   if (!postfix.startsWith("/") && !baseURL.endsWith("/")) {
     postfix = "/" + postfix

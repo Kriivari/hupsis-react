@@ -13,7 +13,7 @@ import EventDetailsScreen from "./components/screens/EventDetailsScreen"
 import Logout from "./components/Logout"
 import { updateLogin } from "./redux/reducers/loginReducer"
 import { UserData } from "./services/models"
-import { getAll, getCodes, getPositions } from "./services/events"
+import { getAll, getCodes } from "./services/events"
 import { useAppSelector, useAppDispatch } from "./hooks"
 import "./index.scss"
 

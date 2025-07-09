@@ -191,10 +191,17 @@ export interface Position {
   latitude: number
   longitude: number
   nickname: string
-  id?: number
+  id: string
+}
+
+export interface LogEntryResponseData {
+  latitude: number
+  longitude: number
+  entry: string
+  id: string
 }
 
 export interface PositionsLogs {
   locations: Position[]
-  logs: EventLogEntryData[]
+  logs: LogEntryResponseData[]
 }

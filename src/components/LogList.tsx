@@ -52,7 +52,7 @@ export const LogList: React.FC<Props> = ({event}) => {
     getEvent(event.id).then(data => {
       setLogEntries(data.data.log_entries)
     })
-  }, [])
+  }, [event.id])
   
   return (
      <Dialog open={listOpen} onOpenChange={(event, data) => { setListOpen(data.open) }}>

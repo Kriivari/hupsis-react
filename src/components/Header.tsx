@@ -1,17 +1,16 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
 import { createHash } from 'crypto'
-import { useAppDispatch, useAppSelector } from "./../hooks"
+import { useAppDispatch, useAppSelector } from "../hooks"
 import { logout } from "../services/users"
 import { setCalendar } from "../redux/slices/loginSlice"
 import { clearEvents, doSearch } from "../redux/slices/eventSlice"
-import { getDate } from "./../util"
-import { strings } from "./../localization"
+import { getDate } from "../util"
+import { strings } from "../localization"
 import { Avatar, Button, Link, Menu, MenuItem, MenuItemLink, MenuList, MenuPopover, MenuTrigger, Table, TableBody, TableCell, TableRow, Toolbar, ToolbarButton, makeStyles, shorthands, tokens } from '@fluentui/react-components'
 import { Calendar24Regular, MoreHorizontal24Filled, TextBulletListLtr24Filled } from "@fluentui/react-icons"
 import { SearchBox } from '@fluentui/react-search-preview'
-import { getAll } from "./../services/events"
-import { positioning } from "./../services/users"
+import { getAll } from "../services/events"
 import { NextEvent } from "./NextEvent"
 import { LogEntry } from "./LogEntry"
 import { EventLogEntry } from "./EventLogEntry"
@@ -91,10 +90,6 @@ export const Header: React.FC<Props> = ({ mobile, width }) => {
   const avatar = user.email ? {src: "https://gravatar.com/avatar/" + createHash('sha256').update(user.email.toLowerCase().trim()).digest('hex')} : {}
   const classes = useStyles()
 
-  if (currentEvent) {
-    positioning(currentEvent.event_users.filter(eu => eu.user && eu.user.id === user.id)[0].id, user.first_name)
-  }
-  
   const doLogout = async () => {
     await appDispatch(logout())
     await appDispatch(clearEvents())

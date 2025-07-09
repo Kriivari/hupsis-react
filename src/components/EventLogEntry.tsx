@@ -1,11 +1,11 @@
 import React, { useState } from "react"
-import { useAppSelector, useAppDispatch } from "./../hooks"
-import { Button, Dialog, DialogTrigger, DialogTitle, DialogContent, DialogSurface, DialogBody, DialogActions, Input, Table, TableBody, TableCell, TableRow, Textarea, makeStyles, tokens } from "@fluentui/react-components"
+import { useAppSelector, useAppDispatch } from "../hooks"
+import { Button, Dialog, DialogTrigger, DialogTitle, DialogContent, DialogSurface, DialogBody, Input, Table, TableBody, TableCell, TableRow, Textarea, makeStyles, tokens } from "@fluentui/react-components"
 import { NoteAddRegular, CheckmarkFilled, DismissFilled } from "@fluentui/react-icons"
-import { EventData, EventLogEntryData } from "../services/models"
-import { getEvent, doEventLog } from "./../services/events"
-import { strings } from "./../localization"
-import { formatHupsisTime } from "./../util"
+import { EventData } from "../services/models"
+import { doEventLog } from "../services/events"
+import { strings } from "../localization"
+import { formatHupsisTime } from "../util"
 
 interface Props {
   event: EventData

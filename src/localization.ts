@@ -86,6 +86,8 @@ export const strings = new LocalizedStrings({
     all_signedup: "All signed up",
     all_confirmed: "All confirmed",
     all_nonconfirmed: "All non-confirmed",
+    operation_code: "Operation code",
+    team_id: "Team ID",
   },
   fi: {
     old_link: "https://paivystykset.punainenristi.fi/",
@@ -172,6 +174,8 @@ export const strings = new LocalizedStrings({
     all_signedup: "Kaikille ilmoittautuneille",
     all_confirmed: "vahvistetuille",
     all_nonconfirmed: "vahvistamattomille",
+    operation_code: "Operaatiokoodi",
+    team_id: "Partion nimi",
   },
   sv: {
     old_link: "https://dejour.rodakorset.fi/",
@@ -254,6 +258,8 @@ export const strings = new LocalizedStrings({
     all_signedup: "Kaikille ilmoittautuneille",
     all_confirmed: "vahvistetuille",
     all_nonconfirmed: "vahvistamattomille",
+    operation_code: "Operaation koodi",
+    team_id: "Partion nimi",
   }
 })
 

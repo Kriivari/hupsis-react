@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import {
   Code,
   EventData,
-  EventLogEntryData,
+  LogEntryResponseData,
   GetEventData,
   LogResponse,
   Position,
@@ -18,8 +18,8 @@ type EventsState = {
   calendar: boolean
   search: string
   currentLogId: number
-  logs: EventLogEntryData[]
-  positions: Position[]
+  logs: {[key: string]: LogEntryResponseData}
+  positions: {[key: string]: Position}
   myPosition?: Position | null
 }
 
@@ -33,41 +33,9 @@ const initialState: EventsState = {
   calendar: false,
   search: "",
   currentLogId: -1,
-  positions: [],
-  logs: [],
+  positions: {},
+  logs: {},
   myPosition: null
-}
-
-function updateMe(positions: Position[], me: Position) {
-  for (let i = 0; i < positions.length; i++) {
-    const p = positions[i]
-    if (checkMine(p, me)) {
-      positions[i] = me
-    }
-  }
-}
-function checkMine(position: Position, me: Position): boolean {
-  return ((me.id && me.id > -1) && position.id === me.id) || ((!me.id || me.id === -1) && position.nickname === me.nickname)
-}
-
-function updateArray(originalArray: any[], newArray: any[], myEntry?: any): void {
-  for (let i = 0; i < newArray.length; i++) {
-    let found = false
-    for (let j = 0; j < originalArray.length; j++) {
-      if (originalArray[j].id === newArray[i].id) {
-        if (!myEntry || !checkMine(originalArray[j], myEntry)) {
-          if (originalArray[j].latitude !== newArray[i].latitude || originalArray[j].longitude !== newArray[i].longitude) {
-            originalArray[j] = newArray[i]
-          }
-        }
-        found = true
-        break;
-      }
-    }
-    if (!found) {
-      originalArray.push(newArray[i])
-    }
-  }
 }
 
 const updateEvents = (state: EventsState, action: PayloadAction<EventData>) => {
@@ -92,7 +60,7 @@ export const eventsSlice = createSlice({
     },
     setMyPosition: (state: any, action: PayloadAction<Position>) => {
       state.myPosition = action.payload
-      updateMe(state.positions, action.payload)
+      state.positions[action.payload.id] = action.payload
     },
     replaceEvents: (state: any, action: any) => {
       action.payload.forEach((ev: EventData) => {
@@ -143,27 +111,31 @@ export const eventsSlice = createSlice({
       state.codes = action.payload
     })
     .addCase(getPositions.fulfilled, (state: EventsState, action: PayloadAction<PositionsLogs>) => {
-      if (state.positions.length > 0) {
-        updateArray(state.positions, action.payload.locations, state.myPosition)
-      } else {
-        state.positions = action.payload.locations
+      for (let i = 0; i < action.payload.locations.length; i++) {
+        const item: Position = action.payload.locations[i]
+        if (!state.positions[item.id]) {
+          state.positions[item.id] = item
+        }
       }
-      if (state.logs.length > 0) {
-        updateArray(state.logs, action.payload.logs)
-      } else {
-        state.logs = action.payload.logs
+      for (let i = 0; i < action.payload.logs.length; i++) {
+        const item: LogEntryResponseData = action.payload.logs[i]
+        if (!state.logs[item.id]) {
+          state.logs[item.id] = item
+        }
       }
     })
     .addCase(getPositionsByCode.fulfilled, (state: EventsState, action: PayloadAction<PositionsLogs>) => {
-      if (state.positions.length > 0) {
-        updateArray(state.positions, action.payload.locations, state.myPosition)
-      } else {
-        state.positions = action.payload.locations
+      for (let i = 0; i < action.payload.locations.length; i++) {
+        const item: Position = action.payload.locations[i]
+        if (!state.positions[item.id]) {
+          state.positions[item.id] = item
+        }
       }
-      if (state.logs.length > 0) {
-        updateArray(state.logs, action.payload.logs)
-      } else {
-        state.logs = action.payload.logs
+      for (let i = 0; i < action.payload.logs.length; i++) {
+        const item: LogEntryResponseData = action.payload.logs[i]
+        if (!state.logs[item.id]) {
+          state.logs[item.id] = item
+        }
       }
     })
     .addCase(getAll.fulfilled, (state: EventsState, action: PayloadAction<GetEventData>) => {

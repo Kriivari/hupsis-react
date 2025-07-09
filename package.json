@@ -47,7 +47,10 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build && cp -r build/* ./cordova/www",
+    "build": "react-app-rewired build && rm -rf ./cordova/www/* && cp -r build/* ./cordova/www",
+    "browser": "cd cordova && cordova build browser && ssh hupsis.eu \"rm -rf v3\" && scp -r platforms/browser/www hupsis.eu:v3",
+      "ios": "source .env && cd cordova && perl -pi -e s/eu.hupsis.hupsis/eu.hupsis.Hupsis/ config.xml && cordova build ios --release --buildFlag=\"-destination platform=iOS Simulator,name=iPhone 16\" -- --codeSignIdentity=\"Apple Development\" --developmentTeam=$TEAMID --packageType=app-store --automaticProvisioning=true",
+      "android": "source .env && cd cordova && perl -pi -e s/eu.hupsis.Hupsis/eu.hupsis.hupsis/ config.xml && TARGET_SDK_VERSION=34 ANDROID_SDK_ROOT=/Users/killer/Library/Android/sdk JAVA_HOME=/usr/local/Cellar/openjdk@17/17.0.15/libexec/openjdk.jdk/Contents/Home cordova build android --release -- --keystore=/Users/killer/AndroidStudioProjects/keystore --alias=upload --storePassword=$PASSWORD --password=$PASSWORD --packageType=bundle",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },

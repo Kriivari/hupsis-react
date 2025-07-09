@@ -16,10 +16,11 @@ import { DismissFilled, LocationRegular, LocationOffRegular } from "@fluentui/re
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet"
 import { useMap, useMapEvent } from 'react-leaflet'
 import { LatLngExpression, LatLngBoundsExpression } from "leaflet"
-import { EventLogEntryData, EventData, Position } from "../services/models"
+import { LogEntryResponseData, EventData, Position } from "../services/models"
 import { positioning, stopPositioning } from "../services/users"
 import { getPositions, getPositionsByCode } from "../services/events"
 import { setMyPosition } from "../redux/slices/eventSlice"
+import { strings } from "../localization"
 import 'leaflet/dist/leaflet.css'
 import BackgroundGeolocation from "cordova-background-geolocation-plugin";
 
@@ -28,7 +29,7 @@ interface Props {
 }
 
 interface PositionsProps {
-  positions: Position[]
+  positions: {[key: number]: Position }
 }
 
 const windowSize = 0.002
@@ -86,6 +87,41 @@ export const Positioning: React.FC<Props> = ({event}) => {
   const [nickname, setNickname] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [intervalCounter, setIntervalCounter] = useState(0)
+  const [cordova, setCordova] = useState(true)
+
+  const doCurrentLocation = () => {
+    if (cordova) {
+      BackgroundGeolocation.getCurrentLocation((location) => {
+        const lat = location.latitude
+        const lon = location.longitude
+        setMapBounds([[lat - windowSize, lon - windowSize], [lat + windowSize, lon + windowSize]] as LatLngBoundsExpression)
+        appDispatch(setMyPosition({
+          id: (currentSignup ? ("" + currentSignup.id) : "-1"),
+          nickname: nickname,
+          latitude: lat,
+          longitude: lon
+        }))
+      }, (error) => {
+        setCordova(false)
+      }, {})
+    } else {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const lat = position.coords.latitude
+          const lon = position.coords.longitude
+          console.log("Current location: " + lat + ", " + lon)
+          setMapBounds([[lat - windowSize, lon - windowSize], [lat + windowSize, lon + windowSize]] as LatLngBoundsExpression)
+          appDispatch(setMyPosition({
+            id: (currentSignup ? ("" + currentSignup.id) : "-1"),
+            nickname: nickname,
+            latitude: lat,
+            longitude: lon
+          }))
+        }, (error) => {
+        }, {})
+      }
+    }
+  }
 
   useEffect(() => {
     if (event || code !== "") {
@@ -94,11 +130,7 @@ export const Positioning: React.FC<Props> = ({event}) => {
       } else {
         appDispatch(getPositionsByCode(code))
       }
-      BackgroundGeolocation.getCurrentLocation((location) => {
-        const lat = location.latitude
-        const lon = location.longitude
-        setMapBounds([[lat - windowSize, lon - windowSize], [lat + windowSize, lon + windowSize]] as LatLngBoundsExpression)
-      }, (error) => {}, {})
+      doCurrentLocation()
       const intervalId = setInterval(() => {
         if (intervalCounter === 0) {
           if (event) {
@@ -109,20 +141,14 @@ export const Positioning: React.FC<Props> = ({event}) => {
         }
 
         if (dialogOpen || intervalCounter === 0) {
-          BackgroundGeolocation.getCurrentLocation((location) => {
-            const lat = location.latitude
-            const lon = location.longitude
-            setMapBounds([[lat - windowSize, lon - windowSize], [lat + windowSize, lon + windowSize]] as LatLngBoundsExpression)
-            appDispatch(setMyPosition({id: (currentSignup ? currentSignup.id : -1), nickname: nickname, latitude: lat, longitude: lon}))
-          }, (error) => {
-          }, {})
+          doCurrentLocation()
         }
 
         setIntervalCounter((intervalCounter + 1) % (dialogOpen ? 6 : 12))
       }, 5000)
       return () => clearInterval(intervalId)
     }
-  }, [event, code, appDispatch, intervalCounter])
+  }, [code, appDispatch, intervalCounter, currentSignup, dialogOpen, nickname])
 
   const toggle = () => {
     // @ts-ignore
@@ -153,7 +179,7 @@ export const Positioning: React.FC<Props> = ({event}) => {
 
   const SetPositions: React.FC<PositionsProps> = ({positions}) => {
     const map = useMap()
-    const mapEvent = useMapEvent('zoomend', () => {
+    useMapEvent('zoomend', () => {
       setZoomed(true)
     })
     if (!zoomed) {
@@ -161,10 +187,10 @@ export const Positioning: React.FC<Props> = ({event}) => {
     }
     return (
         <>
-          {positions && positions.map((p: Position) => (
+          {positions && Object.values(positions).map((p: Position) => (
             <CircleMarker center={{lat: p.latitude, lng: p.longitude} as LatLngExpression} radius={10} color={"red"}><Tooltip offset={[10,0]} direction={"right"} permanent>{p.nickname}</Tooltip></CircleMarker>
           ))}
-          {logs && logs.map((l: EventLogEntryData) => (
+          {logs && Object.values(logs).map((l: LogEntryResponseData) => (
               <CircleMarker center={{lat: l.latitude, lng: l.longitude} as LatLngExpression} radius={10} color={"blue"}><Tooltip offset={[10,0]} direction={"right"} permanent>{l.entry}</Tooltip></CircleMarker>
           ))}
         </>
@@ -177,14 +203,14 @@ export const Positioning: React.FC<Props> = ({event}) => {
         <DialogSurface>
           <DialogBody>
             <DialogContent >
-              <MapContainer style={{height: "250px"}} bounds={mapBounds} scrollWheelZoom={false} >
+              <MapContainer style={{height: "250px"}} bounds={mapBounds} scrollWheelZoom={false} attributionControl={false}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <SetPositions positions={positions}/>
               </MapContainer>
               <form>
                 <div style={{marginTop: "10px"}}>
-                  <Input id="operationcode" name="operationcode" defaultValue={code} placeholder="Operaation tunnus" type="text" className={classes.inputCode} style={{visibility: (user.id > -1 ? "hidden" : "visible")}}/>
-                  <Input id="nickname" name="nickname" type="text" defaultValue={nickname} placeholder="Partion tunniste" className={classes.input} style={{visibility: (user.id > -1 ? "hidden" : "visible")}}/>
+                  <Input id="operationcode" name="operationcode" defaultValue={code} placeholder={strings.operation_code} type="text" className={classes.inputCode} style={{visibility: (user.id > -1 ? "hidden" : "visible")}}/>
+                  <Input id="nickname" name="nickname" type="text" defaultValue={nickname} placeholder={strings.team_id} className={classes.input} style={{visibility: (user.id > -1 ? "hidden" : "visible")}}/>
                   <ToggleButton className={classes.headerButtons} appearance={position ? "secondary" : "primary"} onClick={toggle} checked={position} icon={position ? <LocationOffRegular/> : <LocationRegular/>}/>
                   <DialogTrigger disableButtonEnhancement>
                     <Button className={classes.headerButtons} appearance="secondary" icon={<DismissFilled/>}/>
