@@ -131,9 +131,7 @@ export const Header: React.FC<Props> = ({ mobile, width }) => {
     { currentEvent && (
       <>
         <span className={classes.logentry}><LogEntry event={currentEvent} short={false}/></span>
-        <span className={classes.logentry}><EventLogEntry event={currentEvent} short={false}/></span>
         <span className={classes.logentry}><LogList event={currentEvent} /></span>
-        <span className={classes.logentry}><EventLogList event={currentEvent} /></span>
         <span className={classes.logentry}><Positioning event={currentEvent} /></span>
       </>
     ) }

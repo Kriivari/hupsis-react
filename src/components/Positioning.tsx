@@ -20,6 +20,7 @@ import { LogEntryResponseData, EventData, Position } from "../services/models"
 import { positioning, stopPositioning } from "../services/users"
 import { getPositions, getPositionsByCode } from "../services/events"
 import { setMyPosition } from "../redux/slices/eventSlice"
+import { getDate } from "../util"
 import { strings } from "../localization"
 import 'leaflet/dist/leaflet.css'
 import BackgroundGeolocation from "cordova-background-geolocation-plugin";
@@ -88,6 +89,7 @@ export const Positioning: React.FC<Props> = ({event}) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [intervalCounter, setIntervalCounter] = useState(0)
   const [cordova, setCordova] = useState(true)
+  let intervalID: NodeJS.Timeout;
 
   const doCurrentLocation = () => {
     if (cordova) {
@@ -131,10 +133,14 @@ export const Positioning: React.FC<Props> = ({event}) => {
         appDispatch(getPositionsByCode(code))
       }
       doCurrentLocation()
-      const intervalId = setInterval(() => {
+      intervalID = setInterval(() => {
         if (intervalCounter === 0) {
           if (event) {
-            appDispatch(getPositions(event.id))
+	    if (getDate(event.end_time).getTime() < (new Date()).getTime() - 7200000) {
+	      stopPositioning()
+	      clearInterval(intervalID)
+	    }
+	    appDispatch(getPositions(event.id))
           } else {
             appDispatch(getPositionsByCode(code))
           }
@@ -146,7 +152,7 @@ export const Positioning: React.FC<Props> = ({event}) => {
 
         setIntervalCounter((intervalCounter + 1) % (dialogOpen ? 6 : 12))
       }, 5000)
-      return () => clearInterval(intervalId)
+      return () => clearInterval(intervalID)
     }
   }, [code, appDispatch, intervalCounter, currentSignup, dialogOpen, nickname])
 

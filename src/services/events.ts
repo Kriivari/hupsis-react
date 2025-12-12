@@ -49,13 +49,29 @@ export const getPositionsByCode = createAsyncThunk(
 export const doLog = createAsyncThunk(
   "events/log",
   async (entry: LogEntryData, thunkAPI) => {
-    const res = await axios.post(baseUrl + "/" + entry.event_id + "/log_entry.json",
-      { "log": entry,
-        "commit": "save"
-      })
-    return {id: res.data}
+    const key = "pendingLogs"
+    const storage = window.localStorage
+    const pending = JSON.parse(storage.getItem(key) || "[]")
+    pending.unshift(entry)
+    let res = null
+    let entry = null
+    try {
+      while (pending.length > 0) {
+        entry = pending.shift()
+        res = await axios.post(baseUrl + "/" + entry.event_id + "/log_entry.json",
+          { "log": entry,
+            "commit": "save"
+          })
+      }
+      storage.removeItem(key)
+    } catch (e) {
+      pending.unshift(entry)
+      storage.setItem(key, JSON.stringify(pending))
+      return {id: -2}
+    }
+    return res.data
   }
-)
+}
 
 export const doEventLog = createAsyncThunk(
   "events/event_log",

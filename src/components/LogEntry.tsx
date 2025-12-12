@@ -84,14 +84,25 @@ export const LogEntry: React.FC<Props> = ({event, short}) => {
       setConfirmOpen(true)
     }
     setAge(strings.adult)
+    setDetails("")
     setFirstaid("")
+    setFuture("")
+    setDestination("")
     setMedicine(false)
     setForm(false)
+    setNotes("")
+    setUsage("")
+    setTime("")
   }
 
+  const openChange = (open: boolean) => {
+    setTime(formatHupsisTime(new Date()))
+    setFormOpen(open)
+  }
+    
   return (
     <>
-      <Dialog open={formOpen} onOpenChange={(event, data) => { setFormOpen(data.open) }}>
+      <Dialog open={formOpen} onOpenChange={(event, data) => { openChange(data.open) }}>
         <DialogTrigger><Button appearance="secondary" className={classes.root} icon={<GuestAddRegular/>}>{short ? "" : (event.name.length > 10 ? (event.name.substring(0,10) + '...') : event.name)}</Button></DialogTrigger>
         <DialogSurface>
           <DialogBody>
