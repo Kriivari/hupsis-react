@@ -27,6 +27,7 @@ const useStyles = makeStyles({
 export const Login = () => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
+  const [error, setError] = useState("")
   const [errorOpen, setErrorOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -39,7 +40,8 @@ export const Login = () => {
 
       const data = await login(email, password)
       dispatch(doLogin(data))
-    } catch (error) {
+    } catch (error: any) {
+      setError(error.name + ": " + error.message + " " + error.stack)
       setErrorOpen(true)
     } finally {
       setIsLoading(false)
@@ -67,7 +69,8 @@ export const Login = () => {
             <DialogBody>
               <DialogTitle>Kirjautuminen epäonnistui</DialogTitle>
               <DialogContent>
-                Varmista käyttäjätunnuksesi ja salasanasi.
+                <div><p>Varmista käyttäjätunnuksesi ja salasanasi.</p></div>
+		<div><p>{error}</p></div>
               </DialogContent>
               <DialogActions>
                 <DialogTrigger disableButtonEnhancement>

@@ -3,10 +3,7 @@ import { EventData, EventUserData, UserData } from "./services/models"
 const dayjs = require("dayjs-with-plugins")
 
 export function getURL(postfix: string): string {
-  const baseURL = process.env.REACT_APP_BASE_URL
-    ? process.env.REACT_APP_BASE_URL
-    : "https://paivystykset.punainenristi.fi"
-  //const baseURL = 'http://localhost:3000'
+  const baseURL = "https://paivystykset.punainenristi.fi"
   if (!postfix.startsWith("/") && !baseURL.endsWith("/")) {
     postfix = "/" + postfix
   }

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="eu.hupsis.Hupsis" version="3.0.20" android-versionCode="20250831" ios-CFBundleVersion="20250831" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="eu.hupsis.hupsis" version="3.0.22" android-versionCode="20251232" ios-CFBundleVersion="20251226" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>hupsismobile</name>
     <description>Hupsis Cordova App</description>
     <author email="kalle.kivimaa@iki.fi" href="https://kivimaa.fi">Kalle Kivimaa</author>
@@ -7,7 +7,7 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <access origin="*" />
-    <allow-navigation href="*"/>
+    <allow-navigation href="https://paivystykset.punainenristi.fi/*" />
     <platform name="ios">
       <icon src="icons/icon-1024.png" width="1024" height="1024"/>
       <icon src="icons/icon-167.png" width="167" height="167"/>

@@ -54,24 +54,24 @@ export const doLog = createAsyncThunk(
     const pending = JSON.parse(storage.getItem(key) || "[]")
     pending.unshift(entry)
     let res = null
-    let entry = null
+    let e = null
     try {
       while (pending.length > 0) {
-        entry = pending.shift()
-        res = await axios.post(baseUrl + "/" + entry.event_id + "/log_entry.json",
-          { "log": entry,
+        e = pending.shift()
+        res = await axios.post(baseUrl + "/" + e.event_id + "/log_entry.json",
+          { "log": e,
             "commit": "save"
           })
       }
       storage.removeItem(key)
     } catch (e) {
-      pending.unshift(entry)
+      pending.unshift(e)
       storage.setItem(key, JSON.stringify(pending))
       return {id: -2}
     }
-    return res.data
+    return res ? res.data : null
   }
-}
+)
 
 export const doEventLog = createAsyncThunk(
   "events/event_log",
